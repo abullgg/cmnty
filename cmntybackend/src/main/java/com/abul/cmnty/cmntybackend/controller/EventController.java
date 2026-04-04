@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -24,6 +25,10 @@ public class EventController {
     public EventController(EventService eventService, RegistrationService registrationService) {
         this.eventService = eventService;
         this.registrationService = registrationService;
+    }
+
+    private Long getCurrentUserId() {
+        return (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     // GET /api/events?city=...&page=0&size=10
@@ -52,37 +57,37 @@ public class EventController {
         return ResponseEntity.ok(eventService.getEventsByDateRange(city, from, to, page, size));
     }
 
-    // POST /api/events?hostId=...
+    // POST /api/events
     @PostMapping
     public ResponseEntity<EventResponse> createEvent(
-            @RequestBody EventRequest request,
-            @RequestParam Long hostId) {
+            @RequestBody EventRequest request) {
+        Long hostId = getCurrentUserId();
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(eventService.createEvent(request, hostId));
     }
 
-    // PUT /api/events/{id}?hostId=...
+    // PUT /api/events/{id}
     @PutMapping("/{id}")
     public ResponseEntity<EventResponse> updateEvent(
             @PathVariable Long id,
-            @RequestBody EventRequest request,
-            @RequestParam Long hostId) {
+            @RequestBody EventRequest request) {
+        Long hostId = getCurrentUserId();
         return ResponseEntity.ok(eventService.updateEvent(id, request, hostId));
     }
 
-    // PATCH /api/events/{id}/cancel?hostId=...
+    // PATCH /api/events/{id}/cancel
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<EventResponse> cancelEvent(
-            @PathVariable Long id,
-            @RequestParam Long hostId) {
+            @PathVariable Long id) {
+        Long hostId = getCurrentUserId();
         return ResponseEntity.ok(eventService.cancelEvent(id, hostId));
     }
 
-    // GET /api/events/{id}/registrations?hostId=...
+    // GET /api/events/{id}/registrations
     @GetMapping("/{id}/registrations")
     public ResponseEntity<List<RegistrationResponse>> getEventRegistrations(
-            @PathVariable Long id,
-            @RequestParam Long hostId) {
+            @PathVariable Long id) {
+        Long hostId = getCurrentUserId();
         return ResponseEntity.ok(registrationService.getEventRegistrations(id, hostId));
     }
 }

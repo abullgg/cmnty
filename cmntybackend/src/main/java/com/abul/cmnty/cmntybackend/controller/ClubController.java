@@ -5,6 +5,7 @@ import com.abul.cmnty.cmntybackend.dto.ClubResponse;
 import com.abul.cmnty.cmntybackend.service.ClubService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,10 @@ public class ClubController {
         this.clubService = clubService;
     }
 
+    private Long getCurrentUserId() {
+        return (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
     // GET /api/clubs?city=...
     @GetMapping
     public ResponseEntity<List<ClubResponse>> getClubsByCity(
@@ -26,11 +31,11 @@ public class ClubController {
         return ResponseEntity.ok(clubService.getClubsByCity(city));
     }
 
-    // POST /api/clubs?hostId=...
+    // POST /api/clubs
     @PostMapping
     public ResponseEntity<ClubResponse> createClub(
-            @RequestBody ClubRequest request,
-            @RequestParam Long hostId) {
+            @RequestBody ClubRequest request) {
+        Long hostId = getCurrentUserId();
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(clubService.createClub(request, hostId));
     }
