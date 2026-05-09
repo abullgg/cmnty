@@ -5,6 +5,8 @@ import com.abul.cmnty.cmntybackend.dto.EventResponse;
 import com.abul.cmnty.cmntybackend.dto.RegistrationResponse;
 import com.abul.cmnty.cmntybackend.service.EventService;
 import com.abul.cmnty.cmntybackend.service.RegistrationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/events")
+@Tag(name = "Events", description = "Create, browse, and manage events")
 public class EventController {
 
     private final EventService eventService;
@@ -33,6 +36,7 @@ public class EventController {
 
     // GET /api/events?city=...&page=0&size=10
     @GetMapping
+    @Operation(summary = "Browse all events with optional city filter, paginated")
     public ResponseEntity<Page<EventResponse>> getAllEvents(
             @RequestParam(required = false) String city,
             @RequestParam(defaultValue = "0") int page,
@@ -59,6 +63,7 @@ public class EventController {
 
     // POST /api/events
     @PostMapping
+    @Operation(summary = "Create a new event (authenticated)")
     public ResponseEntity<EventResponse> createEvent(
             @RequestBody EventRequest request) {
         Long hostId = getCurrentUserId();
@@ -77,6 +82,7 @@ public class EventController {
 
     // PATCH /api/events/{id}/cancel
     @PatchMapping("/{id}/cancel")
+    @Operation(summary = "Cancel an event — host only")
     public ResponseEntity<EventResponse> cancelEvent(
             @PathVariable Long id) {
         Long hostId = getCurrentUserId();

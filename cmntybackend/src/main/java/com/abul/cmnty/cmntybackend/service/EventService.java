@@ -4,6 +4,7 @@ import com.abul.cmnty.cmntybackend.dto.EventRequest;
 import com.abul.cmnty.cmntybackend.dto.EventResponse;
 import com.abul.cmnty.cmntybackend.entity.Club;
 import com.abul.cmnty.cmntybackend.entity.Event;
+import com.abul.cmnty.cmntybackend.entity.Registration;
 import com.abul.cmnty.cmntybackend.entity.User;
 import com.abul.cmnty.cmntybackend.exception.EventFullException;
 import com.abul.cmnty.cmntybackend.exception.ResourceNotFoundException;
@@ -18,8 +19,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class EventService {
@@ -66,8 +69,9 @@ public class EventService {
     // -------------------------------------------------------
     // UPDATE (partial — only non-null fields)
     // -------------------------------------------------------
+    @Transactional
     public EventResponse updateEvent(Long eventId, EventRequest request, Long requestingUserId) {
-        Event event = eventRepository.findById(eventId)
+        Event event = eventRepository.findByIdWithLock(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event not found with id " + eventId));
 
         if (!event.getHost().getId().equals(requestingUserId)) {
@@ -137,8 +141,9 @@ public class EventService {
     // -------------------------------------------------------
     // CANCEL
     // -------------------------------------------------------
+    @Transactional // BUG 2 FIX
     public EventResponse cancelEvent(Long eventId, Long requestingUserId) {
-        Event event = eventRepository.findById(eventId)
+        Event event = eventRepository.findByIdWithLock(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event not found with id " + eventId));
 
         if (!event.getHost().getId().equals(requestingUserId)) {
@@ -146,7 +151,16 @@ public class EventService {
         }
 
         event.setStatus(EventStatus.CANCELLED);
-        return mapToResponse(eventRepository.save(event));
+        Event savedEvent = eventRepository.save(event);
+
+        // Fetch all confirmed registrations for this event and update them to CANCELLED
+        List<Registration> registrations = registrationRepository.findByEventAndStatus(event, RegistrationStatus.CONFIRMED);
+        for (Registration reg : registrations) {
+            reg.setStatus(RegistrationStatus.CANCELLED);
+        }
+        registrationRepository.saveAll(registrations);
+
+        return mapToResponse(savedEvent);
     }
 
     // -------------------------------------------------------

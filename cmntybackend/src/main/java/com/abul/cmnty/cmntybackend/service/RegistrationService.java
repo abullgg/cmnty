@@ -35,7 +35,8 @@ public class RegistrationService {
 
     @Transactional
     public RegistrationResponse registerForEvent(Long eventId, Long userId) {
-        Event event = eventRepository.findById(eventId)
+        // BUG 1 FIX: Use findByIdWithLock for pessimistic concurrency control
+        Event event = eventRepository.findByIdWithLock(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event not found with id " + eventId));
 
         if (event.getStatus() != EventStatus.UPCOMING) {
@@ -45,33 +46,38 @@ public class RegistrationService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
 
-        boolean alreadyRegistered = registrationRepository.existsByEventIdAndUserIdAndStatus(eventId, userId, RegistrationStatus.CONFIRMED);
-        if (alreadyRegistered) {
-            throw new AlreadyRegisteredException("User is already registered for this event");
-        }
+        // BUG 4 FIX: Reuse existing records instead of piling up duplicates
+        return registrationRepository.findByEventIdAndUserId(eventId, userId)
+                .map(existing -> {
+                    if (existing.getStatus() == RegistrationStatus.CONFIRMED) {
+                        throw new AlreadyRegisteredException("User is already registered for this event");
+                    }
+                    // Re-activate previously cancelled registration
+                    checkCapacity(event);
+                    existing.setStatus(RegistrationStatus.CONFIRMED);
+                    existing.setRegisteredAt(LocalDateTime.now());
+                    return mapToResponse(registrationRepository.save(existing));
+                })
+                .orElseGet(() -> {
+                    checkCapacity(event);
+                    Registration registration = Registration.builder()
+                            .event(event)
+                            .user(user)
+                            .registeredAt(LocalDateTime.now())
+                            .status(RegistrationStatus.CONFIRMED)
+                            .build();
+                    return mapToResponse(registrationRepository.save(registration));
+                });
+    }
 
-        long confirmedCount = registrationRepository.countByEventIdAndStatus(eventId, RegistrationStatus.CONFIRMED);
+    private void checkCapacity(Event event) {
+        long confirmedCount = registrationRepository.countByEventIdAndStatus(event.getId(), RegistrationStatus.CONFIRMED);
         if (event.getCapacity() != null && confirmedCount >= event.getCapacity()) {
             throw new EventFullException("Event has reached its maximum capacity");
         }
-
-        Registration registration = Registration.builder()
-                .event(event)
-                .user(user)
-                .registeredAt(LocalDateTime.now())
-                .status(RegistrationStatus.CONFIRMED)
-                .build();
-
-        Registration savedRegistration = registrationRepository.save(registration);
-
-        return RegistrationResponse.builder()
-                .id(savedRegistration.getId())
-                .eventTitle(savedRegistration.getEvent().getTitle())
-                .registeredAt(savedRegistration.getRegisteredAt())
-                .status(savedRegistration.getStatus())
-                .build();
     }
 
+    @Transactional // BUG 2 PARTIAL FIX
     public void cancelRegistration(Long eventId, Long userId) {
         Registration registration = registrationRepository.findByEventIdAndUserId(eventId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Registration not found for event " + eventId + " and user " + userId));
@@ -90,13 +96,17 @@ public class RegistrationService {
 
         return registrationRepository.findByEvent(event)
                 .stream()
-                .map(r -> RegistrationResponse.builder()
-                        .id(r.getId())
-                        .eventTitle(r.getEvent().getTitle())
-                        .registeredAt(r.getRegisteredAt())
-                        .status(r.getStatus())
-                        .userName(r.getUser() != null ? r.getUser().getName() : null)
-                        .build())
+                .map(this::mapToResponse)
                 .collect(Collectors.toList());
+    }
+
+    private RegistrationResponse mapToResponse(Registration r) {
+        return RegistrationResponse.builder()
+                .id(r.getId())
+                .eventTitle(r.getEvent().getTitle())
+                .registeredAt(r.getRegisteredAt())
+                .status(r.getStatus())
+                .userName(r.getUser() != null ? r.getUser().getName() : null)
+                .build();
     }
 }

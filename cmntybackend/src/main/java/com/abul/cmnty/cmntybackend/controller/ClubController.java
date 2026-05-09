@@ -3,6 +3,7 @@ package com.abul.cmnty.cmntybackend.controller;
 import com.abul.cmnty.cmntybackend.dto.ClubRequest;
 import com.abul.cmnty.cmntybackend.dto.ClubResponse;
 import com.abul.cmnty.cmntybackend.service.ClubService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/clubs")
+@Tag(name = "Clubs", description = "Create and browse clubs")
 public class ClubController {
 
     private final ClubService clubService;

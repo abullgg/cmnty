@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>cmnty | Connect and Create</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-container": "#dcdcdc",
+                      "outline": "#6b7c65",
+                      "on-surface-variant": "#3b4b37",
+                      "tertiary": "#5e5e5e",
+                      "surface-container-highest": "#e2e2e2",
+                      "on-background": "#1a1c1c",
+                      "background": "#f9f9f9",
+                      "surface-tint": "#006e16",
+                      "inverse-primary": "#00e639",
+                      "surface-dim": "#dadada",
+                      "on-primary-container": "#007117",
+                      "surface-bright": "#f9f9f9",
+                      "on-secondary": "#ffffff",
+                      "surface": "#f9f9f9",
+                      "secondary-fixed": "#e1e3e4",
+                      "primary-container": "#00ff41",
+                      "error-container": "#ffdad6",
+                      "on-secondary-container": "#626566",
+                      "on-primary-fixed": "#002203",
+                      "on-tertiary-fixed": "#1b1b1b",
+                      "on-error": "#ffffff",
+                      "surface-container": "#eeeeee",
+                      "secondary-fixed-dim": "#c5c7c8",
+                      "surface-container-low": "#f3f3f4",
+                      "on-tertiary-fixed-variant": "#474747",
+                      "inverse-on-surface": "#f0f1f1",
+                      "on-error-container": "#93000a",
+                      "on-primary-fixed-variant": "#00530e",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-fixed": "#191c1d",
+                      "tertiary-fixed-dim": "#c6c6c6",
+                      "on-secondary-fixed-variant": "#454748",
+                      "on-tertiary-container": "#606060",
+                      "secondary": "#5c5f60",
+                      "surface-variant": "#e2e2e2",
+                      "outline-variant": "#b9ccb2",
+                      "on-primary": "#ffffff",
+                      "surface-container-high": "#e8e8e8",
+                      "on-surface": "#1a1c1c",
+                      "primary-fixed-dim": "#00e639",
+                      "primary-fixed": "#72ff70",
+                      "primary": "#006e16",
+                      "error": "#ba1a1a",
+                      "inverse-surface": "#2f3131",
+                      "tertiary-fixed": "#e2e2e2",
+                      "secondary-container": "#e1e3e4",
+                      "on-tertiary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "unit": "8px",
+                      "margin-mobile": "20px",
+                      "margin-desktop": "64px",
+                      "container-max": "1280px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "headline-lg": [
+                              "Bricolage Grotesque"
+                      ],
+                      "headline-md": [
+                              "Bricolage Grotesque"
+                      ],
+                      "label-md": [
+                              "Bricolage Grotesque"
+                      ],
+                      "headline-lg-mobile": [
+                              "Bricolage Grotesque"
+                      ],
+                      "body-lg": [
+                              "Bricolage Grotesque"
+                      ],
+                      "display-lg": [
+                              "Bricolage Grotesque"
+                      ],
+                      "body-md": [
+                              "Bricolage Grotesque"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg": [
+                              "40px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "64px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.04em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        
+        .glass-nav {
+            background: rgba(249, 249, 249, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+        }
+
+        .dark .glass-nav {
+            background: rgba(47, 49, 49, 0.3);
+            box-shadow: 0 4px 30px rgba(255, 165, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        
+        .split-screen {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (min-width: 768px) {
+            .split-screen {
+                flex-direction: row;
+            }
+            .split-left, .split-right {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                padding: theme('spacing.margin-desktop');
+                min-height: 100vh;
+            }
+        }
+        
+        .split-left {
+            background-color: theme('colors.surface-container-lowest');
+            padding: theme('spacing.margin-mobile');
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .split-right {
+            background-color: theme('colors.inverse-surface');
+            color: theme('colors.inverse-on-surface');
+            padding: theme('spacing.margin-mobile');
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .pill-btn-primary {
+            background-color: theme('colors.primary-container');
+            color: theme('colors.on-primary-fixed');
+            border-radius: theme('borderRadius.full');
+            padding: 16px 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: theme('fontFamily.label-md');
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+        }
+        
+        .pill-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 255, 65, 0.2);
+        }
+
+        .pill-btn-outline {
+            border: 1.5px solid theme('colors.on-surface');
+            color: theme('colors.on-surface');
+            border-radius: theme('borderRadius.full');
+            padding: 16px 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: theme('fontFamily.label-md');
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+        }
+
+        .dark .pill-btn-outline, .split-right .pill-btn-outline {
+             border-color: theme('colors.inverse-on-surface');
+             color: theme('colors.inverse-on-surface');
+        }
+
+        .pill-btn-outline:hover {
+            background-color: theme('colors.on-surface');
+            color: theme('colors.surface');
+        }
+        
+        .dark .pill-btn-outline:hover, .split-right .pill-btn-outline:hover {
+            background-color: theme('colors.inverse-on-surface');
+            color: theme('colors.inverse-surface');
+        }
+      </style>
+</head>
+<body class="antialiased overflow-x-hidden selection:bg-primary-container selection:text-on-primary-fixed">
+<!-- Top Navigation (Generated from JSON) -->
+<nav class="fixed top-0 left-0 right-0 z-50 flex justify-center items-center w-full mt-6 px-4">
+<div class="glass-nav rounded-full max-w-fit mx-auto px-6 py-2 border border-white/20 dark:border-white/10 flex items-center gap-8">
+<a class="font-display-lg text-[24px] font-extrabold tracking-tighter text-on-surface dark:text-inverse-on-surface flex items-center gap-2" href="#">
+<span class="w-3 h-3 rounded-full bg-primary-container inline-block"></span>
+                cmnty
+            </a>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-on-surface-variant dark:text-on-secondary-fixed-variant font-label-md text-label-md font-medium hover:text-primary dark:hover:text-primary-fixed-dim transition-all duration-300" href="/feed">Feed</a>
+<a class="text-on-surface-variant dark:text-on-secondary-fixed-variant font-label-md text-label-md font-medium hover:text-primary dark:hover:text-primary-fixed-dim transition-all duration-300" href="/clubs">Clubs</a>
+<a class="text-on-surface-variant dark:text-on-secondary-fixed-variant font-label-md text-label-md font-medium hover:text-primary dark:hover:text-primary-fixed-dim transition-all duration-300" href="/events">Events</a>
+<a class="text-on-surface-variant dark:text-on-secondary-fixed-variant font-label-md text-label-md font-medium hover:text-primary dark:hover:text-primary-fixed-dim transition-all duration-300" href="/explore">Explore</a>
+</div>
+<div class="flex items-center gap-4">
+<button aria-label="Toggle Theme" class="w-10 h-10 rounded-full bg-surface-container-high dark:bg-inverse-surface flex items-center justify-center hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-on-surface dark:text-inverse-on-surface">light_mode</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant">
+<img alt="User avatar" class="w-full h-full object-cover" data-alt="A close up portrait of a young professional woman with minimal natural makeup, against a clean light background. The lighting is soft and even, highlighting her features. She has a subtle, confident expression. High-key minimalist photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvlmaBhwJ_MkI9IzcWD1JEQYA-OAyl1x_Q-z5Sn-38tqYv8vUxy4J5dmlTFey4Z6K1ajd02tk7EEkY9J1msV5htHHjtLMy2yI3-Slk1LKoC0qmPhbkUSD8Tjeyxe_ZDZTt3euGWt_ug2jEtXv24mt980o4qrTwGugVCo4Ct_7z8KNQPe7X2XK_6DFUWjNR6saxWwnf-xjZLS74P9w6o2OFX3IezJvhLNXiPTmRb2aqSsl8TRPbvsTQg0CkXilwW2xW7k0mjCOBXaE"/>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="split-screen overflow-hidden">
+<!-- Left Side: Discover Next -->
+<section class="split-left relative overflow-hidden group transition-all duration-500 hover:scale-[1.02] hover:z-20 hover:shadow-2xl">
+<div class="relative z-10 max-w-xl mx-auto md:ml-auto md:mr-12 xl:mr-24 w-full">
+<div class="mb-8">
+<span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container-low border border-surface-variant font-label-md text-label-md text-on-surface-variant uppercase tracking-widest mb-6">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+                        For Members
+                    </span>
+<h1 class="font-display-lg text-[48px] md:text-[72px] leading-[1.1] tracking-[-0.04em] font-extrabold text-on-surface mb-6">
+                        Discover<br/>Next.
+                    </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-md mb-10">
+                        Immerse yourself in curated events, find your niche, and connect with minds that challenge your perspective. The platform for the curious.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="pill-btn-primary group/btn" href="/events">
+                            Explore Events
+                            <span class="material-symbols-outlined ml-2 group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Decorative Elements -->
+<div class="absolute -right-20 -bottom-20 w-64 h-64 bg-primary-container/10 rounded-full blur-3xl mix-blend-multiply"></div>
+</div>
+</section>
+<!-- Right Side: Host Energy -->
+<section class="split-right relative overflow-hidden group transition-all duration-500 hover:scale-[1.02] hover:z-20 hover:shadow-[0_0_50px_rgba(0,230,57,0.15)]">
+<div class="relative z-10 max-w-xl mx-auto md:mr-auto md:ml-12 xl:ml-24 w-full">
+<div class="mb-8">
+<span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 font-label-md text-label-md text-inverse-on-surface uppercase tracking-widest mb-6">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+                        For Creators
+                    </span>
+<h1 class="font-display-lg text-[48px] md:text-[72px] leading-[1.1] tracking-[-0.04em] font-extrabold text-inverse-on-surface mb-6">
+                        Host<br/>Energy.
+                    </h1>
+<p class="font-body-lg text-body-lg text-tertiary-fixed-dim max-w-md mb-10">
+                        Build your club, orchestrate moments, and cultivate a highly engaged audience. Provide the canvas, they bring the color.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="pill-btn-outline group/btn" href="/clubs">
+                            Create a Club
+                            <span class="material-symbols-outlined ml-2 group-hover/btn:translate-x-1 transition-transform">add</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Minimalist typographic texture background -->
+</section>
+</main>
+</body></html>

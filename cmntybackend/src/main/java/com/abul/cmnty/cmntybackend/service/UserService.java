@@ -54,7 +54,7 @@ public class UserService {
         );
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new com.abul.cmnty.cmntybackend.exception.ResourceNotFoundException("User not found"));
 
         String token = jwtUtil.generateToken(user.getId(), user.getEmail());
 
