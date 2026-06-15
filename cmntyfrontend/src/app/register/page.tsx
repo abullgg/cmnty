@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { fetchApi, setAuthToken } from '@/lib/api';
+import { fetchApi, setAuthUser } from '@/lib/api';
 import Link from 'next/link';
 
 export default function Register() {
@@ -25,7 +25,7 @@ export default function Register() {
             });
             
             if (data && data.token) {
-                setAuthToken(data.token);
+                setAuthUser(data.token, data.userId, data.name);
                 window.dispatchEvent(new Event('auth-change'));
                 router.push('/');
             } else {

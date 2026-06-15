@@ -11,5 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ClubRequest {
     private String name;
+    private String description;
     private String city;
+    private String category;
 }

@@ -36,7 +36,12 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll() // Open login/register
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() // Swagger UI
-                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/clubs/**", "/api/events/**").permitAll() // Open browsing
+                // Authenticated GET endpoints — must be listed BEFORE the broad permitAll
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/events/*/my-registration").authenticated()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/events/*/registrations").authenticated()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/users/me").authenticated()
+                // Public browsing
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/clubs/**", "/api/events/**").permitAll()
                 .anyRequest().authenticated() // Everything else requires token
             )
             .sessionManagement(session -> session

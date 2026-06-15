@@ -9,11 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClubResponse {
+public class UserProfileResponse {
     private Long id;
     private String name;
-    private String description;
-    private String city;
-    private String category;
-    private String hostName;
+    private String email;
 }

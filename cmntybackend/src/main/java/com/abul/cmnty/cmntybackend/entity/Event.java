@@ -20,11 +20,18 @@ public class Event {
 
     private String title;
 
-    private LocalDateTime dateTime;
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    private LocalDateTime startTime;
+
+    private LocalDateTime endTime;
 
     private Integer capacity;
 
     private String city;
+
+    private String category;
 
     @ManyToOne
     @JoinColumn(name = "host_id", nullable = false)

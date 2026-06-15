@@ -100,6 +100,13 @@ public class RegistrationService {
                 .collect(Collectors.toList());
     }
 
+    public RegistrationResponse getMyRegistration(Long eventId, Long userId) {
+        Registration registration = registrationRepository.findByEventIdAndUserId(eventId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No registration found for event " + eventId + " and current user"));
+        return mapToResponse(registration);
+    }
+
     private RegistrationResponse mapToResponse(Registration r) {
         return RegistrationResponse.builder()
                 .id(r.getId())

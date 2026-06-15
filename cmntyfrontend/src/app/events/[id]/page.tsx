@@ -10,12 +10,11 @@ interface EventResponse {
     title: string;
     description: string;
     city: string;
-    address: string;
     startTime: string;
     endTime: string;
     capacity: number;
-    registeredCount: number;
-    clubName: string;
+    clubName: string | null;
+    category: string | null;
     hostName: string;
     status: string;
 }
@@ -67,6 +66,7 @@ export default function EventDetails() {
                 <div className="absolute inset-0 bg-gradient-to-t from-on-background/80 via-on-background/20 to-transparent"></div>
                 <div className="absolute bottom-0 left-0 w-full p-8 md:p-12 text-white">
                     <span className="inline-block bg-primary-container text-black text-[14px] leading-[1.2] tracking-[0.05em] font-semibold px-4 py-1.5 rounded-full mb-4">{event.clubName || 'General Event'}</span>
+                    {event.category && <span className="inline-block bg-white/20 backdrop-blur-md text-white text-[14px] leading-[1.2] tracking-[0.05em] font-semibold px-4 py-1.5 rounded-full mb-4 ml-2">{event.category}</span>}
                     <h1 className="text-[64px] leading-[1.1] tracking-[-0.04em] font-extrabold text-white mb-2 max-w-4xl">{event.title}</h1>
                     <p className="text-[18px] leading-[1.6] font-normal text-surface-container max-w-2xl opacity-90 line-clamp-2">{event.description}</p>
                 </div>
@@ -96,8 +96,7 @@ export default function EventDetails() {
                             <span className="material-symbols-outlined text-primary text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>location_on</span>
                             <div>
                                 <h3 className="text-[14px] leading-[1.2] tracking-[0.05em] font-semibold text-on-surface-variant mb-1">Location</h3>
-                                <p className="text-[24px] leading-[1.3] font-semibold text-on-surface">{event.address || 'TBA'}</p>
-                                <p className="text-[16px] leading-[1.6] font-normal text-on-surface-variant">{event.city}</p>
+                                <p className="text-[24px] leading-[1.3] font-semibold text-on-surface">{event.city}</p>
                             </div>
                         </div>
                     </div>
@@ -121,7 +120,7 @@ export default function EventDetails() {
                     {/* Registration Card */}
                     <div className="bg-surface rounded-xl p-8 border border-surface-variant shadow-[0_10px_30px_rgba(0,0,0,0.04)] sticky top-32">
                         <h3 className="text-[24px] leading-[1.3] font-semibold mb-2">Registration</h3>
-                        <p className="text-[16px] leading-[1.6] font-normal text-on-surface-variant mb-6">{event.capacity ? `Limited spots available (${event.registeredCount}/${event.capacity} registered).` : 'Spots available.'}</p>
+                        <p className="text-[16px] leading-[1.6] font-normal text-on-surface-variant mb-6">{event.capacity ? `Limited to ${event.capacity} spots.` : 'Spots available.'}</p>
                         <div className="flex justify-between items-center mb-8 pb-6 border-b border-surface-variant">
                             <span className="text-[14px] leading-[1.2] tracking-[0.05em] font-semibold text-on-surface-variant">General Admission</span>
                             <span className="text-[24px] leading-[1.3] font-semibold text-on-surface">Free</span>

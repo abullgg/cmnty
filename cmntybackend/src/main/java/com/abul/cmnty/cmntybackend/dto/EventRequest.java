@@ -13,8 +13,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class EventRequest {
     private String title;
-    private LocalDateTime dateTime;
+    private String description;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private Integer capacity;
     private String city;
+    private String category;
     private Long clubId;
 }

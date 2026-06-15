@@ -2,8 +2,11 @@ package com.abul.cmnty.cmntybackend.service;
 
 import com.abul.cmnty.cmntybackend.dto.AuthRequest;
 import com.abul.cmnty.cmntybackend.dto.AuthResponse;
+import com.abul.cmnty.cmntybackend.dto.UserProfileRequest;
+import com.abul.cmnty.cmntybackend.dto.UserProfileResponse;
 import com.abul.cmnty.cmntybackend.entity.User;
 import com.abul.cmnty.cmntybackend.exception.AlreadyRegisteredException;
+import com.abul.cmnty.cmntybackend.exception.ResourceNotFoundException;
 import com.abul.cmnty.cmntybackend.repository.UserRepository;
 import com.abul.cmnty.cmntybackend.security.JwtUtil;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -54,7 +57,7 @@ public class UserService {
         );
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new com.abul.cmnty.cmntybackend.exception.ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         String token = jwtUtil.generateToken(user.getId(), user.getEmail());
 
@@ -64,4 +67,39 @@ public class UserService {
                 .name(user.getName())
                 .build();
     }
+
+    public UserProfileResponse getProfile(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
+
+        return UserProfileResponse.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
+    }
+
+    public UserProfileResponse updateProfile(Long userId, UserProfileRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
+
+        if (request.getName() != null) {
+            user.setName(request.getName());
+        }
+        if (request.getEmail() != null && !request.getEmail().equals(user.getEmail())) {
+            // Check if the new email is already taken by another user
+            if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+                throw new AlreadyRegisteredException("Email is already taken");
+            }
+            user.setEmail(request.getEmail());
+        }
+
+        User savedUser = userRepository.save(user);
+        return UserProfileResponse.builder()
+                .id(savedUser.getId())
+                .name(savedUser.getName())
+                .email(savedUser.getEmail())
+                .build();
+    }
 }
+

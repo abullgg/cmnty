@@ -91,9 +91,27 @@ public class EventController {
 
     // GET /api/events/{id}/registrations
     @GetMapping("/{id}/registrations")
+    @Operation(summary = "View all registrations for an event — host only")
     public ResponseEntity<List<RegistrationResponse>> getEventRegistrations(
             @PathVariable Long id) {
         Long hostId = getCurrentUserId();
         return ResponseEntity.ok(registrationService.getEventRegistrations(id, hostId));
+    }
+
+    // DELETE /api/events/{id}
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete an event — host only")
+    public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
+        Long hostId = getCurrentUserId();
+        eventService.deleteEvent(id, hostId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // GET /api/events/{id}/my-registration
+    @GetMapping("/{id}/my-registration")
+    @Operation(summary = "Check current user's registration for an event")
+    public ResponseEntity<RegistrationResponse> getMyRegistration(@PathVariable Long id) {
+        Long userId = getCurrentUserId();
+        return ResponseEntity.ok(registrationService.getMyRegistration(id, userId));
     }
 }

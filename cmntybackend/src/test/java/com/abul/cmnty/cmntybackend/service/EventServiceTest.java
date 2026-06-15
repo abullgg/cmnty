@@ -41,7 +41,7 @@ class EventServiceTest {
     @Test
     void createEvent_Success() {
         Long hostId = 1L;
-        EventRequest request = new EventRequest("Event Title", LocalDateTime.now(), 50, "City", null);
+        EventRequest request = new EventRequest("Event Title", "A test event", LocalDateTime.now(), LocalDateTime.now().plusHours(2), 50, "City", null);
         
         User host = new User();
         host.setId(hostId);
@@ -69,7 +69,7 @@ class EventServiceTest {
     void createEvent_WithClub_Success() {
         Long hostId = 1L;
         Long clubId = 2L;
-        EventRequest request = new EventRequest("Event Title", LocalDateTime.now(), 50, "City", clubId);
+        EventRequest request = new EventRequest("Event Title", "A club event", LocalDateTime.now(), LocalDateTime.now().plusHours(2), 50, "City", clubId);
         
         User host = new User();
         host.setId(hostId);

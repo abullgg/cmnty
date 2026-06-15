@@ -17,7 +17,12 @@ public class Club {
 
     private String name;
 
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
     private String city;
+
+    private String category;
 
     @ManyToOne
     @JoinColumn(name = "host_id", nullable = false)

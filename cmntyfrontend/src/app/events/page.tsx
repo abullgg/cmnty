@@ -11,9 +11,11 @@ interface EventResponse {
     city: string;
     startTime: string;
     endTime: string;
-    registeredCount: number;
     capacity: number;
     status: string;
+    category: string | null;
+    hostName: string;
+    clubName: string | null;
 }
 
 interface PaginatedResponse {
@@ -115,12 +117,14 @@ export default function EventsBoard() {
                                         <div className="flex items-center gap-4 mb-4">
                                             <span className="bg-surface-container px-3 py-1 rounded-full text-[12px] leading-[1.2] tracking-[0.05em] font-semibold text-on-surface-variant">{formatDate(event.startTime)}</span>
                                             <span className="text-on-surface-variant flex items-center gap-1 text-[12px] leading-[1.2] tracking-[0.05em] font-semibold"><span className="material-symbols-outlined text-[14px]">location_on</span> {event.city}</span>
+                                            {event.clubName && <span className="bg-primary-container/20 text-primary px-3 py-1 rounded-full text-[12px] leading-[1.2] tracking-[0.05em] font-semibold">{event.clubName}</span>}
+                                            {event.category && <span className="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-[12px] leading-[1.2] tracking-[0.05em] font-semibold">{event.category}</span>}
                                         </div>
                                         <h2 className="text-[24px] leading-[1.3] font-semibold mb-3 text-on-surface">{event.title}</h2>
                                         <p className="text-[16px] leading-[1.6] font-normal text-on-surface-variant mb-8 line-clamp-2">{event.description}</p>
                                         <div className="mt-auto flex items-center justify-between">
                                             <div className="text-[14px] font-semibold text-on-surface-variant">
-                                                {event.registeredCount} / {event.capacity} Attending
+                                                Hosted by {event.hostName}
                                             </div>
                                             <Link href={`/events/${event.id}`} className="w-12 h-12 rounded-full border-2 border-on-background flex items-center justify-center group-hover:bg-primary-container group-hover:border-primary-container group-hover:text-on-primary-fixed transition-colors duration-300">
                                                 <span className="material-symbols-outlined">arrow_forward</span>
@@ -146,10 +150,12 @@ export default function EventsBoard() {
                                         <span className="bg-surface-container px-3 py-1 rounded-full text-[12px] leading-[1.2] tracking-[0.05em] font-semibold text-on-surface-variant">{formatDate(event.startTime)}</span>
                                         <span className="text-on-surface-variant flex items-center gap-1 text-[12px] leading-[1.2] tracking-[0.05em] font-semibold"><span className="material-symbols-outlined text-[14px]">location_on</span> {event.city}</span>
                                     </div>
+                                    {event.clubName && <span className="inline-block bg-primary-container/20 text-primary px-3 py-1 rounded-full text-[12px] leading-[1.2] tracking-[0.05em] font-semibold mb-2">{event.clubName}</span>}
+                                    {event.category && <span className="inline-block bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-[12px] leading-[1.2] tracking-[0.05em] font-semibold mb-2 ml-1">{event.category}</span>}
                                     <h3 className="text-[20px] leading-tight font-semibold mb-2 text-on-surface">{event.title}</h3>
                                     <p className="text-[14px] leading-[1.6] font-normal text-on-surface-variant mb-6 line-clamp-2">{event.description}</p>
                                     <div className="mt-auto pt-4 border-t border-outline-variant/30 flex items-center justify-between">
-                                        <span className="text-[14px] leading-[1.2] tracking-[0.05em] font-semibold text-on-surface">{event.status === 'CANCELLED' ? 'Cancelled' : `${event.registeredCount}/${event.capacity} Attending`}</span>
+                                        <span className="text-[14px] leading-[1.2] tracking-[0.05em] font-semibold text-on-surface">{event.status === 'CANCELLED' ? 'Cancelled' : `Hosted by ${event.hostName}`}</span>
                                         <Link href={`/events/${event.id}`} className="h-8 px-4 flex items-center justify-center rounded-full border border-on-background text-on-background text-[12px] leading-[1.2] tracking-[0.05em] font-semibold hover:bg-on-background hover:text-surface transition-colors">Details</Link>
                                     </div>
                                 </div>

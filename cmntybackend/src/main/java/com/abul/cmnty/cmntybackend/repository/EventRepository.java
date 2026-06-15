@@ -28,8 +28,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Page<Event> findByCity(String city, Pageable pageable);
 
     // --- Date range queries ---
-    Page<Event> findByDateTimeBetween(LocalDateTime from, LocalDateTime to, Pageable pageable);
+    Page<Event> findByStartTimeBetween(LocalDateTime from, LocalDateTime to, Pageable pageable);
 
-    Page<Event> findByCityAndDateTimeBetween(String city, LocalDateTime from,
-                                              LocalDateTime to, Pageable pageable);
+    Page<Event> findByCityAndStartTimeBetween(String city, LocalDateTime from,
+                                               LocalDateTime to, Pageable pageable);
 }

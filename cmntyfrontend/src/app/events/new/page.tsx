@@ -10,7 +10,7 @@ export default function CreateEvent() {
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
     const [city, setCity] = useState('');
-    const [address, setAddress] = useState('');
+    const [category, setCategory] = useState('');
     const [capacity, setCapacity] = useState<number | ''>('');
     const [description, setDescription] = useState('');
     const [loading, setLoading] = useState(false);
@@ -32,10 +32,10 @@ export default function CreateEvent() {
                 body: JSON.stringify({
                     title,
                     description,
-                    city,
-                    address,
                     startTime: startDateTime.toISOString(),
                     endTime: endDateTime.toISOString(),
+                    city,
+                    category: category || null,
                     capacity: capacity === '' ? null : Number(capacity),
                 })
             });
@@ -146,17 +146,16 @@ export default function CreateEvent() {
                                     </div>
                                 </div>
                                 <div className="relative">
-                                    <label className="block text-[14px] leading-[1.2] tracking-[0.05em] font-semibold text-on-surface-variant mb-2 ml-4" htmlFor="event-address">Venue Address</label>
+                                    <label className="block text-[14px] leading-[1.2] tracking-[0.05em] font-semibold text-on-surface-variant mb-2 ml-4" htmlFor="event-category">Category</label>
                                     <div className="relative flex items-center">
-                                        <span className="material-symbols-outlined absolute left-4 text-on-surface-variant pointer-events-none">location_on</span>
+                                        <span className="material-symbols-outlined absolute left-4 text-on-surface-variant pointer-events-none">category</span>
                                         <input 
-                                            id="event-address" 
-                                            required 
+                                            id="event-category" 
                                             type="text" 
-                                            value={address}
-                                            onChange={e => setAddress(e.target.value)}
+                                            value={category}
+                                            onChange={e => setCategory(e.target.value)}
                                             className="w-full bg-[#F8F9FA] border-0 focus:ring-2 focus:ring-primary-container rounded-full py-3 pl-12 pr-4 text-[16px] leading-[1.6] font-normal text-on-surface placeholder:text-tertiary" 
-                                            placeholder="e.g., The Glasshouse" 
+                                            placeholder="e.g., Workshop, Meetup, Social" 
                                         />
                                     </div>
                                 </div>

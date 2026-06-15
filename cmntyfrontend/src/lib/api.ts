@@ -13,9 +13,31 @@ export const setAuthToken = (token: string) => {
     }
 }
 
+export const setAuthUser = (token: string, userId: number, name: string) => {
+    if (typeof window !== 'undefined') {
+        localStorage.setItem('token', token);
+        localStorage.setItem('userId', String(userId));
+        localStorage.setItem('name', name);
+    }
+}
+
+export const getAuthUser = () => {
+    if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
+        const name = localStorage.getItem('name');
+        if (token && userId && name) {
+            return { token, userId: Number(userId), name };
+        }
+    }
+    return null;
+}
+
 export const clearAuthToken = () => {
     if (typeof window !== 'undefined') {
         localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('name');
     }
 }
 

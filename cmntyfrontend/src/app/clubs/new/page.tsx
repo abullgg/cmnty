@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 export default function CreateClub() {
     const [name, setName] = useState('');
     const [city, setCity] = useState('');
+    const [category, setCategory] = useState('');
     const [description, setDescription] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -20,7 +21,7 @@ export default function CreateClub() {
         try {
             await fetchApi('/clubs', {
                 method: 'POST',
-                body: JSON.stringify({ name, city, description })
+                body: JSON.stringify({ name, city, category: category || null, description })
             });
             router.push('/clubs');
         } catch (err: any) {
@@ -72,6 +73,20 @@ export default function CreateClub() {
                                     onChange={(e) => setCity(e.target.value)}
                                     className="w-full bg-surface-container-low border border-transparent focus:border-primary-container focus:ring-1 focus:ring-primary-container rounded-full pl-14 pr-6 py-4 text-[16px] leading-[1.6] font-normal text-on-surface outline-none transition-all placeholder:text-outline" 
                                     placeholder="Enter city name" 
+                                />
+                            </div>
+                        </div>
+                        {/* Input: Category */}
+                        <div>
+                            <label className="block text-[14px] leading-[1.2] tracking-[0.05em] font-semibold text-on-surface-variant mb-2 pl-4">Category</label>
+                            <div className="relative">
+                                <span className="material-symbols-outlined absolute left-6 top-1/2 -translate-y-1/2 text-on-surface-variant">category</span>
+                                <input 
+                                    type="text" 
+                                    value={category}
+                                    onChange={(e) => setCategory(e.target.value)}
+                                    className="w-full bg-surface-container-low border border-transparent focus:border-primary-container focus:ring-1 focus:ring-primary-container rounded-full pl-14 pr-6 py-4 text-[16px] leading-[1.6] font-normal text-on-surface outline-none transition-all placeholder:text-outline" 
+                                    placeholder="e.g., Tech, Sports, Music" 
                                 />
                             </div>
                         </div>

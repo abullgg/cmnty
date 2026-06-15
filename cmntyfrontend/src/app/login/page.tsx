@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { fetchApi, setAuthToken } from '@/lib/api';
+import { fetchApi, setAuthUser } from '@/lib/api';
 import Link from 'next/link';
 
 export default function Login() {
@@ -24,7 +24,7 @@ export default function Login() {
             });
             
             if (data && data.token) {
-                setAuthToken(data.token);
+                setAuthUser(data.token, data.userId, data.name);
                 window.dispatchEvent(new Event('auth-change'));
                 router.push('/');
             } else {
@@ -37,6 +37,7 @@ export default function Login() {
         }
     };
 
+    return (
         <main className="flex-grow flex items-center justify-center p-[20px] md:p-[64px] mt-24">
             <div className="w-full max-w-[480px] bg-surface-container-lowest rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.04)] p-[40px] md:p-[64px] border border-surface-variant relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-primary-container to-primary-fixed-dim"></div>
@@ -93,4 +94,5 @@ export default function Login() {
                 </div>
             </div>
         </main>
+    );
 }

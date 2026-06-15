@@ -55,8 +55,11 @@ public class EventService {
 
         Event event = Event.builder()
                 .title(request.getTitle())
-                .dateTime(request.getDateTime())
+                .description(request.getDescription())
+                .startTime(request.getStartTime())
+                .endTime(request.getEndTime())
                 .capacity(request.getCapacity())
+                .category(request.getCategory())
                 .city(request.getCity())
                 .host(host)
                 .club(club)
@@ -81,11 +84,20 @@ public class EventService {
         if (request.getTitle() != null) {
             event.setTitle(request.getTitle());
         }
-        if (request.getDateTime() != null) {
-            event.setDateTime(request.getDateTime());
+        if (request.getDescription() != null) {
+            event.setDescription(request.getDescription());
+        }
+        if (request.getStartTime() != null) {
+            event.setStartTime(request.getStartTime());
+        }
+        if (request.getEndTime() != null) {
+            event.setEndTime(request.getEndTime());
         }
         if (request.getCity() != null) {
             event.setCity(request.getCity());
+        }
+        if (request.getCategory() != null) {
+            event.setCategory(request.getCategory());
         }
         if (request.getCapacity() != null) {
             long confirmedCount = registrationRepository.countByEventIdAndStatus(eventId, RegistrationStatus.CONFIRMED);
@@ -102,7 +114,7 @@ public class EventService {
     // GET ALL (paginated, optional city filter)
     // -------------------------------------------------------
     public Page<EventResponse> getAllEvents(String city, int page, int size) {
-        var pageable = PageRequest.of(page, size, Sort.by("dateTime").ascending());
+        var pageable = PageRequest.of(page, size, Sort.by("startTime").ascending());
 
         Page<Event> events;
         if (city != null && !city.trim().isEmpty()) {
@@ -127,13 +139,13 @@ public class EventService {
     // -------------------------------------------------------
     public Page<EventResponse> getEventsByDateRange(String city, LocalDateTime from,
                                                      LocalDateTime to, int page, int size) {
-        var pageable = PageRequest.of(page, size, Sort.by("dateTime").ascending());
+        var pageable = PageRequest.of(page, size, Sort.by("startTime").ascending());
 
         Page<Event> events;
         if (city != null && !city.trim().isEmpty()) {
-            events = eventRepository.findByCityAndDateTimeBetween(city, from, to, pageable);
+            events = eventRepository.findByCityAndStartTimeBetween(city, from, to, pageable);
         } else {
-            events = eventRepository.findByDateTimeBetween(from, to, pageable);
+            events = eventRepository.findByStartTimeBetween(from, to, pageable);
         }
         return events.map(this::mapToResponse);
     }
@@ -164,16 +176,38 @@ public class EventService {
     }
 
     // -------------------------------------------------------
+    // DELETE
+    // -------------------------------------------------------
+    @Transactional
+    public void deleteEvent(Long eventId, Long requestingUserId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found with id " + eventId));
+
+        if (!event.getHost().getId().equals(requestingUserId)) {
+            throw new UnauthorizedException("Only the host can delete this event");
+        }
+
+        // Delete all registrations for this event first
+        List<Registration> registrations = registrationRepository.findByEvent(event);
+        registrationRepository.deleteAll(registrations);
+
+        eventRepository.delete(event);
+    }
+
+    // -------------------------------------------------------
     // MAPPING
     // -------------------------------------------------------
     private EventResponse mapToResponse(Event event) {
         return EventResponse.builder()
                 .id(event.getId())
                 .title(event.getTitle())
-                .dateTime(event.getDateTime())
+                .description(event.getDescription())
+                .startTime(event.getStartTime())
+                .endTime(event.getEndTime())
                 .capacity(event.getCapacity())
                 .city(event.getCity())
                 .status(event.getStatus())
+                .category(event.getCategory())
                 .hostName(event.getHost() != null ? event.getHost().getName() : null)
                 .clubName(event.getClub() != null ? event.getClub().getName() : null)
                 .build();
