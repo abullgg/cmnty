@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { fetchApi } from '@/lib/api';
 import { useRouter } from 'next/navigation';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 export default function CreateEvent() {
     const router = useRouter();
@@ -48,7 +49,8 @@ export default function CreateEvent() {
     };
 
     return (
-        <main className="flex-grow pt-[120px] pb-[80px] px-[20px] md:px-[64px] max-w-[1280px] mx-auto w-full flex flex-col lg:flex-row gap-[24px]">
+        <ProtectedRoute>
+            <main className="flex-grow pt-[120px] pb-[80px] px-[20px] md:px-[64px] max-w-[1280px] mx-auto w-full flex flex-col lg:flex-row gap-[24px]">
             {/* Header / Context */}
             <div className="lg:w-1/3 flex flex-col gap-2 sticky top-[120px] h-fit">
                 <div className="inline-flex items-center gap-2 text-primary bg-primary-container/10 px-4 py-1.5 rounded-full w-fit mb-4">
@@ -219,5 +221,6 @@ export default function CreateEvent() {
                 </div>
             </div>
         </main>
+        </ProtectedRoute>
     );
 }

@@ -36,7 +36,12 @@ class ClubServiceTest {
     void createClub_Success() {
         // Arrange
         Long hostId = 1L;
-        ClubRequest request = new ClubRequest("Tech Club", "New York");
+        ClubRequest request = ClubRequest.builder()
+                .name("Tech Club")
+                .city("New York")
+                .description("A test club")
+                .category("Tech")
+                .build();
         User mockUser = new User();
         mockUser.setId(hostId);
         mockUser.setName("John Doe");
@@ -66,7 +71,12 @@ class ClubServiceTest {
     void createClub_UserNotFound_ThrowsException() {
         // Arrange
         Long hostId = 1L;
-        ClubRequest request = new ClubRequest("Tech Club", "New York");
+        ClubRequest request = ClubRequest.builder()
+                .name("Tech Club")
+                .city("New York")
+                .description("A test club")
+                .category("Tech")
+                .build();
 
         when(userRepository.findById(hostId)).thenReturn(Optional.empty());
 

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { fetchApi } from '@/lib/api';
 import { useParams, useRouter } from 'next/navigation';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 export default function EditEvent() {
     const params = useParams();
@@ -86,7 +87,8 @@ export default function EditEvent() {
     if (loading) return <div className="pt-32 pb-24 text-center">Loading event...</div>;
 
     return (
-        <main className="max-w-[1280px] mx-auto px-[20px] md:px-[64px] pt-32 pb-24">
+        <ProtectedRoute>
+            <main className="max-w-[1280px] mx-auto px-[20px] md:px-[64px] pt-32 pb-24">
             <div className="mb-12">
                 <h1 className="text-[64px] leading-[1.1] tracking-[-0.04em] font-extrabold mb-4">Edit Event</h1>
                 <p className="text-[18px] leading-[1.6] font-normal text-on-surface-variant max-w-2xl">Refine your event details. Ensure clarity and accuracy for your community members.</p>
@@ -214,5 +216,6 @@ export default function EditEvent() {
                 </div>
             </form>
         </main>
+        </ProtectedRoute>
     );
 }

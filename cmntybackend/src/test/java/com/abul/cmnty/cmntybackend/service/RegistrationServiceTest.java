@@ -59,9 +59,9 @@ class RegistrationServiceTest {
         savedRegistration.setRegisteredAt(LocalDateTime.now());
         savedRegistration.setStatus(RegistrationStatus.CONFIRMED);
 
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(eventRepository.findByIdWithLock(eventId)).thenReturn(Optional.of(event));
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(registrationRepository.existsByEventIdAndUserIdAndStatus(eventId, userId, RegistrationStatus.CONFIRMED)).thenReturn(false);
+        when(registrationRepository.findByEventIdAndUserId(eventId, userId)).thenReturn(Optional.empty());
         when(registrationRepository.countByEventIdAndStatus(eventId, RegistrationStatus.CONFIRMED)).thenReturn(5L);
         when(registrationRepository.save(any(Registration.class))).thenReturn(savedRegistration);
 
@@ -86,9 +86,9 @@ class RegistrationServiceTest {
         User user = new User();
         user.setId(userId);
 
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(eventRepository.findByIdWithLock(eventId)).thenReturn(Optional.of(event));
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(registrationRepository.existsByEventIdAndUserIdAndStatus(eventId, userId, RegistrationStatus.CONFIRMED)).thenReturn(false);
+        when(registrationRepository.findByEventIdAndUserId(eventId, userId)).thenReturn(Optional.empty());
         when(registrationRepository.countByEventIdAndStatus(eventId, RegistrationStatus.CONFIRMED)).thenReturn(2L);
 
         assertThrows(EventFullException.class, () -> registrationService.registerForEvent(eventId, userId));
@@ -107,9 +107,11 @@ class RegistrationServiceTest {
         User user = new User();
         user.setId(userId);
 
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(eventRepository.findByIdWithLock(eventId)).thenReturn(Optional.of(event));
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(registrationRepository.existsByEventIdAndUserIdAndStatus(eventId, userId, RegistrationStatus.CONFIRMED)).thenReturn(true);
+        Registration existing = new Registration();
+        existing.setStatus(RegistrationStatus.CONFIRMED);
+        when(registrationRepository.findByEventIdAndUserId(eventId, userId)).thenReturn(Optional.of(existing));
 
         assertThrows(AlreadyRegisteredException.class, () -> registrationService.registerForEvent(eventId, userId));
     }
@@ -123,7 +125,7 @@ class RegistrationServiceTest {
         event.setId(eventId);
         event.setStatus(EventStatus.CANCELLED);
 
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(eventRepository.findByIdWithLock(eventId)).thenReturn(Optional.of(event));
 
         assertThrows(IllegalStateException.class, () -> registrationService.registerForEvent(eventId, userId));
     }

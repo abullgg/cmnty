@@ -3,6 +3,7 @@ import { Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import { AuthProvider } from "@/context/AuthContext";
 
 const bricolage = Bricolage_Grotesque({ 
   subsets: ["latin"],
@@ -25,8 +26,10 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       </head>
       <body className={`${bricolage.variable} antialiased overflow-x-hidden selection:bg-primary-container selection:text-on-primary-fixed`} style={{ fontFamily: 'var(--font-bricolage)' }}>
-        <Navbar />
-        {children}
+        <AuthProvider>
+          <Navbar />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

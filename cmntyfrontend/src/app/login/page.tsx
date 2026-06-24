@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { fetchApi, setAuthUser } from '@/lib/api';
+import { fetchApi } from '@/lib/api';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Login() {
     const [email, setEmail] = useState('');
@@ -11,6 +12,7 @@ export default function Login() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const { login } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -24,8 +26,7 @@ export default function Login() {
             });
             
             if (data && data.token) {
-                setAuthUser(data.token, data.userId, data.name);
-                window.dispatchEvent(new Event('auth-change'));
+                login(data.token, data.userId, data.name);
                 router.push('/');
             } else {
                 setError('Invalid login response');
@@ -36,6 +37,7 @@ export default function Login() {
             setLoading(false);
         }
     };
+
 
     return (
         <main className="flex-grow flex items-center justify-center p-[20px] md:p-[64px] mt-24">

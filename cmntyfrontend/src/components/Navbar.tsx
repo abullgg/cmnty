@@ -1,7 +1,17 @@
 'use client';
 
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
+
 export default function Navbar() {
+    const { isAuthenticated, currentUser, loading, logout } = useAuth();
+    const router = useRouter();
+
+    const handleLogout = () => {
+        logout();
+        router.push('/login');
+    };
 
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center items-center w-full mt-6 px-[20px] md:px-[64px] pointer-events-none">
@@ -19,9 +29,24 @@ export default function Navbar() {
                     <button className="w-10 h-10 rounded-full flex items-center justify-center border border-outline-variant hover:border-primary transition-all duration-300 group text-on-surface-variant hover:text-primary">
                         <span className="material-symbols-outlined text-[20px]">dark_mode</span>
                     </button>
-                    <Link href="/login" className="w-10 h-10 rounded-full overflow-hidden border border-outline-variant hover:border-primary transition-colors duration-300 block">
-                        <img alt="User avatar" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhyRWHvl0VJczah6NM8d-RLgutyZBBOq-TuTj4I1JW-FchKxqMqcGJ2RpNePU2ThOrE4pPW-E5ZDpILcCgBOTSiwneCSTxtZXpWBAuuQMqLsarHswh-jifXyKNXNNDdIkxTOVmZs9RozqHWvb6Yic-HNBLDjHK-lmNAy3VQOWqbHDbPHUTR6cQn7eK_esJ44gt6h7XB6BQPhY8uOp1LFlhh5wKKtcSGIO9N46v9VfuNrlWtcN6Pq3BxxaNOGModlDVMUsK3KBsKNw" />
-                    </Link>
+                    {!loading && isAuthenticated && currentUser ? (
+                        <div className="flex items-center space-x-3">
+                            <span className="text-[14px] font-semibold text-on-surface hidden sm:inline-block">
+                                Hello, {currentUser.name}
+                            </span>
+                            <button 
+                                onClick={handleLogout}
+                                className="h-10 px-4 rounded-full border border-outline-variant hover:border-primary hover:text-primary text-[12px] font-semibold tracking-[0.05em] transition-all duration-300 flex items-center gap-2 group text-on-surface-variant"
+                            >
+                                <span className="material-symbols-outlined text-[18px]">logout</span>
+                                <span>Logout</span>
+                            </button>
+                        </div>
+                    ) : (
+                        <Link href="/login" className="w-10 h-10 rounded-full overflow-hidden border border-outline-variant hover:border-primary transition-colors duration-300 block">
+                            <img alt="User avatar" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhyRWHvl0VJczah6NM8d-RLgutyZBBOq-TuTj4I1JW-FchKxqMqcGJ2RpNePU2ThOrE4pPW-E5ZDpILcCgBOTSiwneCSTxtZXpWBAuuQMqLsarHswh-jifXyKNXNNDdIkxTOVmZs9RozqHWvb6Yic-HNBLDjHK-lmNAy3VQOWqbHDbPHUTR6cQn7eK_esJ44gt6h7XB6BQPhY8uOp1LFlhh5wKKtcSGIO9N46v9VfuNrlWtcN6Pq3BxxaNOGModlDVMUsK3KBsKNw" />
+                        </Link>
+                    )}
                 </div>
             </div>
         </nav>

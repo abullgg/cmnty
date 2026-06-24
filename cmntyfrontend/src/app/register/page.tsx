@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { fetchApi, setAuthUser } from '@/lib/api';
+import { fetchApi } from '@/lib/api';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Register() {
     const [name, setName] = useState('');
@@ -12,6 +13,7 @@ export default function Register() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const { login } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -25,8 +27,7 @@ export default function Register() {
             });
             
             if (data && data.token) {
-                setAuthUser(data.token, data.userId, data.name);
-                window.dispatchEvent(new Event('auth-change'));
+                login(data.token, data.userId, data.name);
                 router.push('/');
             } else {
                 setError('Invalid registration response');
@@ -37,6 +38,7 @@ export default function Register() {
             setLoading(false);
         }
     };
+
 
     return (
         <main className="flex-grow flex items-center justify-center px-[20px] md:px-[64px] py-16 mt-24">

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { fetchApi } from '@/lib/api';
 import { useRouter } from 'next/navigation';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 export default function CreateClub() {
     const [name, setName] = useState('');
@@ -32,7 +33,8 @@ export default function CreateClub() {
     };
 
     return (
-        <main className="max-w-[1280px] mx-auto px-[20px] md:px-[64px] min-h-screen pt-[160px] pb-[120px]">
+        <ProtectedRoute>
+            <main className="max-w-[1280px] mx-auto px-[20px] md:px-[64px] min-h-screen pt-[160px] pb-[120px]">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-[24px] items-center">
                 {/* Left Asymmetric Image Panel */}
                 <div className="md:col-span-5 h-[400px] md:h-[600px] rounded-xl overflow-hidden relative shadow-[0_10px_30px_rgba(0,0,0,0.04)] border border-surface-variant">
@@ -117,5 +119,6 @@ export default function CreateClub() {
                 </div>
             </div>
         </main>
+        </ProtectedRoute>
     );
 }

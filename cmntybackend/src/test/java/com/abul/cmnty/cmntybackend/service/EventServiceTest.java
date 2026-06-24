@@ -10,6 +10,8 @@ import com.abul.cmnty.cmntybackend.model.enums.EventStatus;
 import com.abul.cmnty.cmntybackend.repository.ClubRepository;
 import com.abul.cmnty.cmntybackend.repository.EventRepository;
 import com.abul.cmnty.cmntybackend.repository.UserRepository;
+import com.abul.cmnty.cmntybackend.repository.RegistrationRepository;
+import com.abul.cmnty.cmntybackend.model.enums.RegistrationStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,13 +37,25 @@ class EventServiceTest {
     @Mock
     private ClubRepository clubRepository;
 
+    @Mock
+    private RegistrationRepository registrationRepository;
+
     @InjectMocks
     private EventService eventService;
 
     @Test
     void createEvent_Success() {
         Long hostId = 1L;
-        EventRequest request = new EventRequest("Event Title", "A test event", LocalDateTime.now(), LocalDateTime.now().plusHours(2), 50, "City", null);
+        EventRequest request = EventRequest.builder()
+                .title("Event Title")
+                .description("A test event")
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusHours(2))
+                .capacity(50)
+                .city("City")
+                .category("Tech")
+                .clubId(null)
+                .build();
         
         User host = new User();
         host.setId(hostId);
@@ -69,7 +83,16 @@ class EventServiceTest {
     void createEvent_WithClub_Success() {
         Long hostId = 1L;
         Long clubId = 2L;
-        EventRequest request = new EventRequest("Event Title", "A club event", LocalDateTime.now(), LocalDateTime.now().plusHours(2), 50, "City", clubId);
+        EventRequest request = EventRequest.builder()
+                .title("Event Title")
+                .description("A club event")
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusHours(2))
+                .capacity(50)
+                .city("City")
+                .category("Tech")
+                .clubId(clubId)
+                .build();
         
         User host = new User();
         host.setId(hostId);
@@ -106,8 +129,10 @@ class EventServiceTest {
         event.setHost(host);
         event.setStatus(EventStatus.UPCOMING);
 
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(eventRepository.findByIdWithLock(eventId)).thenReturn(Optional.of(event));
         when(eventRepository.save(any(Event.class))).thenReturn(event);
+        when(registrationRepository.findByEventAndStatus(any(Event.class), any(RegistrationStatus.class)))
+                .thenReturn(java.util.Collections.emptyList());
 
         EventResponse response = eventService.cancelEvent(eventId, requestingUserId);
 
@@ -126,7 +151,7 @@ class EventServiceTest {
         event.setId(eventId);
         event.setHost(host);
 
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(eventRepository.findByIdWithLock(eventId)).thenReturn(Optional.of(event));
 
         assertThrows(UnauthorizedException.class, () -> eventService.cancelEvent(eventId, 99L)); // Requesting user is 99L
     }
