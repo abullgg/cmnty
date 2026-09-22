@@ -7,13 +7,15 @@ export type AuthUser = {
     token: string;
     userId: number;
     name: string;
+    role: string;
 };
 
 interface AuthContextType {
     currentUser: AuthUser | null;
     isAuthenticated: boolean;
+    isAdmin: boolean;
     loading: boolean;
-    login: (token: string, userId: number, name: string) => void;
+    login: (token: string, userId: number, name: string, role: string) => void;
     logout: () => void;
 }
 
@@ -32,9 +34,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setLoading(false);
     }, []);
 
-    const login = (token: string, userId: number, name: string) => {
-        setAuthUser(token, userId, name);
-        setCurrentUser({ token, userId, name });
+    const login = (token: string, userId: number, name: string, role: string) => {
+        setAuthUser(token, userId, name, role);
+        setCurrentUser({ token, userId, name, role });
     };
 
     const logout = () => {
@@ -43,9 +45,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const isAuthenticated = currentUser !== null && currentUser.token.length > 0;
+    const isAdmin = isAuthenticated && currentUser?.role === 'ADMIN';
 
     return (
-        <AuthContext.Provider value={{ currentUser, isAuthenticated, loading, login, logout }}>
+        <AuthContext.Provider value={{ currentUser, isAuthenticated, isAdmin, loading, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
@@ -58,3 +61,4 @@ export function useAuth() {
     }
     return context;
 }
+

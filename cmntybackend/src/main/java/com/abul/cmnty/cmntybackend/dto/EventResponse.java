@@ -22,6 +22,7 @@ public class EventResponse {
     private String city;
     private EventStatus status;
     private String category;
+    private Long hostId;
     private String hostName;
     private String clubName; // nullable
 }

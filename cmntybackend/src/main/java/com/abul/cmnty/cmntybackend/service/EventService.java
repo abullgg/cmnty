@@ -11,6 +11,7 @@ import com.abul.cmnty.cmntybackend.exception.ResourceNotFoundException;
 import com.abul.cmnty.cmntybackend.exception.UnauthorizedException;
 import com.abul.cmnty.cmntybackend.model.enums.EventStatus;
 import com.abul.cmnty.cmntybackend.model.enums.RegistrationStatus;
+import com.abul.cmnty.cmntybackend.model.enums.Role;
 import com.abul.cmnty.cmntybackend.repository.ClubRepository;
 import com.abul.cmnty.cmntybackend.repository.EventRepository;
 import com.abul.cmnty.cmntybackend.repository.RegistrationRepository;
@@ -38,6 +39,18 @@ public class EventService {
         this.userRepository = userRepository;
         this.clubRepository = clubRepository;
         this.registrationRepository = registrationRepository;
+    }
+
+    /**
+     * Checks if the requesting user is an admin or the host of the given event.
+     * ADMIN → can manage everything. USER → can manage only if they own it.
+     */
+    private void requireAdminOrHost(Event event, Long requestingUserId) {
+        User requestingUser = userRepository.findById(requestingUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + requestingUserId));
+        if (requestingUser.getRole() != Role.ADMIN && !event.getHost().getId().equals(requestingUserId)) {
+            throw new UnauthorizedException("Only the host or an admin can perform this action");
+        }
     }
 
     // -------------------------------------------------------
@@ -77,9 +90,7 @@ public class EventService {
         Event event = eventRepository.findByIdWithLock(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event not found with id " + eventId));
 
-        if (!event.getHost().getId().equals(requestingUserId)) {
-            throw new UnauthorizedException("Only the host can update this event");
-        }
+        requireAdminOrHost(event, requestingUserId);
 
         if (request.getTitle() != null) {
             event.setTitle(request.getTitle());
@@ -158,9 +169,7 @@ public class EventService {
         Event event = eventRepository.findByIdWithLock(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event not found with id " + eventId));
 
-        if (!event.getHost().getId().equals(requestingUserId)) {
-            throw new UnauthorizedException("Only the host can cancel the event");
-        }
+        requireAdminOrHost(event, requestingUserId);
 
         event.setStatus(EventStatus.CANCELLED);
         Event savedEvent = eventRepository.save(event);
@@ -183,9 +192,7 @@ public class EventService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event not found with id " + eventId));
 
-        if (!event.getHost().getId().equals(requestingUserId)) {
-            throw new UnauthorizedException("Only the host can delete this event");
-        }
+        requireAdminOrHost(event, requestingUserId);
 
         // Delete all registrations for this event first
         List<Registration> registrations = registrationRepository.findByEvent(event);
@@ -208,6 +215,7 @@ public class EventService {
                 .city(event.getCity())
                 .status(event.getStatus())
                 .category(event.getCategory())
+                .hostId(event.getHost() != null ? event.getHost().getId() : null)
                 .hostName(event.getHost() != null ? event.getHost().getName() : null)
                 .clubName(event.getClub() != null ? event.getClub().getName() : null)
                 .build();

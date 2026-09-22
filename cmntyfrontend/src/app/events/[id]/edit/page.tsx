@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react';
 import { fetchApi } from '@/lib/api';
 import { useParams, useRouter } from 'next/navigation';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { useAuth } from '@/context/AuthContext';
 
 export default function EditEvent() {
     const params = useParams();
     const router = useRouter();
+    const { currentUser, isAdmin } = useAuth();
     
     const [title, setTitle] = useState('');
     const [date, setDate] = useState('');
@@ -33,6 +35,12 @@ export default function EditEvent() {
             setDescription(data.description || '');
             setCity(data.city || '');
             setAddress(data.address || '');
+
+            // Redirect if user is not the host and not admin
+            if (data.hostId && currentUser && data.hostId !== currentUser.userId && !isAdmin) {
+                router.push(`/events/${id}`);
+                return;
+            }
             
             if (data.startTime) {
                 const d = new Date(data.startTime);
@@ -175,15 +183,12 @@ export default function EditEvent() {
                 <div className="md:col-span-4 space-y-8">
                     <section className="bg-surface/70 backdrop-blur-xl border border-white/20 p-8 rounded-xl shadow-sm">
                         <h2 className="text-[24px] leading-[1.3] font-semibold mb-6 border-b border-outline-variant pb-4">Cover Image</h2>
-                        <div className="relative w-full aspect-video rounded-lg overflow-hidden mb-4 group cursor-pointer border border-outline-variant">
-                            <img alt="Event cover image" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXAlWHkhNP2cRsrMPjGpwQWx4UAM5zdJhALg7NcHjHuWXfv3WP8lOL625GlIY34sy0_vAIQeQ604_4XFyUQXaVGIxmPZBbnX4XVPyks0d2N_txuDZF1p5lRZRhgzthohFeoVUBQVq-ejac1tcCh7VlJ1Wygs2kqhdq9xArxEDvLYzVKmQi5kCdmrM16uRtLlCIMl7dJaI6o_W6qzMLAhr-U5KNFSK8JNKg5fz4w4Vb1SPCyb-orhAzDx5tIcwv-mJNQiUCQ1fsuDY"/>
-                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <span className="bg-surface text-on-surface px-4 py-2 rounded-full text-[14px] leading-[1.2] tracking-[0.05em] font-semibold flex items-center gap-2">
-                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>upload</span> Replace
-                                </span>
+                        <div className="relative w-full aspect-video rounded-lg overflow-hidden mb-4 border border-outline-variant bg-surface-container-low flex items-center justify-center">
+                            <div className="text-center p-6">
+                                <span className="material-symbols-outlined text-on-surface-variant text-[48px] mb-2 block">image</span>
+                                <p className="text-[14px] text-on-surface-variant font-semibold">Image upload coming soon</p>
                             </div>
                         </div>
-                        <p className="text-[16px] leading-[1.6] font-normal text-on-surface-variant text-sm">Recommended size: 1920x1080px. Max file size: 5MB.</p>
                     </section>
                     
                     {/* Actions */}

@@ -26,7 +26,7 @@ export default function Login() {
             });
             
             if (data && data.token) {
-                login(data.token, data.userId, data.name);
+                login(data.token, data.userId, data.name, data.role || 'USER');
                 router.push('/');
             } else {
                 setError('Invalid login response');

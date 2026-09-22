@@ -18,3 +18,8 @@ spring.jpa.show-sql=true
 # --- JWT ---
 jwt.secret=YOUR_JWT_SECRET_HERE_MAKE_IT_LONG_AND_RANDOM
 jwt.expiration=86400000
+
+# --- Admin Bootstrap ---
+# The first user to register with this email gets ADMIN role.
+# Remove or leave blank after initial setup.
+cmnty.admin.email=

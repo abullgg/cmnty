@@ -1,14 +1,15 @@
 package com.abul.cmnty.cmntybackend.security;
 
 import com.abul.cmnty.cmntybackend.entity.User;
-import com.abul.cmnty.cmntybackend.exception.ResourceNotFoundException;
+import com.abul.cmnty.cmntybackend.model.enums.Role;
 import com.abul.cmnty.cmntybackend.repository.UserRepository;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -24,10 +25,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
+        // Role loaded from DB on every request — NOT from JWT.
+        // This ensures demoted admins lose access immediately.
+        Role role = user.getRole() != null ? user.getRole() : Role.USER;
+
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
-                new ArrayList<>() // Empty authorities/roles for now
+                List.of(new SimpleGrantedAuthority("ROLE_" + role.name()))
         );
     }
 }
+

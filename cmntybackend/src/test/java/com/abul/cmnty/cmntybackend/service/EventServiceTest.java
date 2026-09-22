@@ -7,11 +7,12 @@ import com.abul.cmnty.cmntybackend.entity.Event;
 import com.abul.cmnty.cmntybackend.entity.User;
 import com.abul.cmnty.cmntybackend.exception.UnauthorizedException;
 import com.abul.cmnty.cmntybackend.model.enums.EventStatus;
+import com.abul.cmnty.cmntybackend.model.enums.RegistrationStatus;
+import com.abul.cmnty.cmntybackend.model.enums.Role;
 import com.abul.cmnty.cmntybackend.repository.ClubRepository;
 import com.abul.cmnty.cmntybackend.repository.EventRepository;
-import com.abul.cmnty.cmntybackend.repository.UserRepository;
 import com.abul.cmnty.cmntybackend.repository.RegistrationRepository;
-import com.abul.cmnty.cmntybackend.model.enums.RegistrationStatus;
+import com.abul.cmnty.cmntybackend.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -123,6 +124,7 @@ class EventServiceTest {
 
         User host = new User();
         host.setId(requestingUserId);
+        host.setRole(Role.USER);
 
         Event event = new Event();
         event.setId(eventId);
@@ -130,6 +132,7 @@ class EventServiceTest {
         event.setStatus(EventStatus.UPCOMING);
 
         when(eventRepository.findByIdWithLock(eventId)).thenReturn(Optional.of(event));
+        when(userRepository.findById(requestingUserId)).thenReturn(Optional.of(host));
         when(eventRepository.save(any(Event.class))).thenReturn(event);
         when(registrationRepository.findByEventAndStatus(any(Event.class), any(RegistrationStatus.class)))
                 .thenReturn(java.util.Collections.emptyList());
@@ -143,16 +146,23 @@ class EventServiceTest {
     @Test
     void cancelEvent_Unauthorized_ThrowsException() {
         Long eventId = 1L;
+        Long requestingUserId = 99L;
         
         User host = new User();
         host.setId(2L); // Actual host is 2L
+
+        // The requesting user is a regular USER, not the host
+        User requestingUser = new User();
+        requestingUser.setId(requestingUserId);
+        requestingUser.setRole(Role.USER);
 
         Event event = new Event();
         event.setId(eventId);
         event.setHost(host);
 
         when(eventRepository.findByIdWithLock(eventId)).thenReturn(Optional.of(event));
+        when(userRepository.findById(requestingUserId)).thenReturn(Optional.of(requestingUser));
 
-        assertThrows(UnauthorizedException.class, () -> eventService.cancelEvent(eventId, 99L)); // Requesting user is 99L
+        assertThrows(UnauthorizedException.class, () -> eventService.cancelEvent(eventId, requestingUserId));
     }
 }

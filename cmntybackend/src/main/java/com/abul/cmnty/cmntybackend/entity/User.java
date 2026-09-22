@@ -1,5 +1,6 @@
 package com.abul.cmnty.cmntybackend.entity;
 
+import com.abul.cmnty.cmntybackend.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,4 +22,8 @@ public class User {
     private String email;
 
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Role role = Role.USER;
 }

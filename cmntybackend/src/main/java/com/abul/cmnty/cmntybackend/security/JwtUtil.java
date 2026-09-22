@@ -24,10 +24,11 @@ public class JwtUtil {
         this.expirationTime = expirationTime;
     }
 
-    public String generateToken(Long userId, String email) {
+    public String generateToken(Long userId, String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
                 .claim("userId", userId)
+                .claim("role", role) // For frontend convenience only — backend loads from DB
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -40,6 +41,10 @@ public class JwtUtil {
 
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
@@ -72,3 +77,4 @@ public class JwtUtil {
                 .getBody();
     }
 }
+

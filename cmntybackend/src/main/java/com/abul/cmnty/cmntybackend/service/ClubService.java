@@ -6,6 +6,7 @@ import com.abul.cmnty.cmntybackend.entity.Club;
 import com.abul.cmnty.cmntybackend.entity.User;
 import com.abul.cmnty.cmntybackend.exception.ResourceNotFoundException;
 import com.abul.cmnty.cmntybackend.exception.UnauthorizedException;
+import com.abul.cmnty.cmntybackend.model.enums.Role;
 import com.abul.cmnty.cmntybackend.repository.ClubRepository;
 import com.abul.cmnty.cmntybackend.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,14 @@ public class ClubService {
     public ClubService(ClubRepository clubRepository, UserRepository userRepository) {
         this.clubRepository = clubRepository;
         this.userRepository = userRepository;
+    }
+
+    private void requireAdminOrHost(Club club, Long requestingUserId) {
+        User requestingUser = userRepository.findById(requestingUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + requestingUserId));
+        if (requestingUser.getRole() != Role.ADMIN && !club.getHost().getId().equals(requestingUserId)) {
+            throw new UnauthorizedException("Only the host or an admin can perform this action");
+        }
     }
 
     public ClubResponse createClub(ClubRequest request, Long hostId) {
@@ -60,9 +69,7 @@ public class ClubService {
         Club club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new ResourceNotFoundException("Club not found with id " + clubId));
 
-        if (!club.getHost().getId().equals(requestingUserId)) {
-            throw new UnauthorizedException("Only the host can update this club");
-        }
+        requireAdminOrHost(club, requestingUserId);
 
         if (request.getName() != null) {
             club.setName(request.getName());
@@ -84,9 +91,7 @@ public class ClubService {
         Club club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new ResourceNotFoundException("Club not found with id " + clubId));
 
-        if (!club.getHost().getId().equals(requestingUserId)) {
-            throw new UnauthorizedException("Only the host can delete this club");
-        }
+        requireAdminOrHost(club, requestingUserId);
 
         clubRepository.delete(club);
     }
@@ -98,6 +103,7 @@ public class ClubService {
                 .description(club.getDescription())
                 .city(club.getCity())
                 .category(club.getCategory())
+                .hostId(club.getHost() != null ? club.getHost().getId() : null)
                 .hostName(club.getHost() != null ? club.getHost().getName() : null)
                 .build();
     }

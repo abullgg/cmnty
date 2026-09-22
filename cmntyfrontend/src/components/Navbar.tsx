@@ -20,15 +20,10 @@ export default function Navbar() {
                     cmnty
                 </Link>
                 <div className="hidden md:flex items-center space-x-6">
-                    <Link href="/feed" className="text-[14px] leading-[1.2] tracking-[0.05em] font-semibold text-on-surface-variant hover:text-primary transition-all duration-300">Feed</Link>
                     <Link href="/clubs" className="text-[14px] leading-[1.2] tracking-[0.05em] font-semibold text-on-surface-variant hover:text-primary transition-all duration-300">Clubs</Link>
                     <Link href="/events" className="text-[14px] leading-[1.2] tracking-[0.05em] font-semibold text-on-surface-variant hover:text-primary transition-all duration-300">Events</Link>
-                    <Link href="/explore" className="text-[14px] leading-[1.2] tracking-[0.05em] font-semibold text-primary font-bold border-b-2 border-primary pb-1 active:scale-95 transition-transform duration-200">Explore</Link>
                 </div>
                 <div className="flex items-center space-x-4">
-                    <button className="w-10 h-10 rounded-full flex items-center justify-center border border-outline-variant hover:border-primary transition-all duration-300 group text-on-surface-variant hover:text-primary">
-                        <span className="material-symbols-outlined text-[20px]">dark_mode</span>
-                    </button>
                     {!loading && isAuthenticated && currentUser ? (
                         <div className="flex items-center space-x-3">
                             <span className="text-[14px] font-semibold text-on-surface hidden sm:inline-block">

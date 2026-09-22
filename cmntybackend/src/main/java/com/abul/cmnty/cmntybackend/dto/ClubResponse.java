@@ -15,5 +15,6 @@ public class ClubResponse {
     private String description;
     private String city;
     private String category;
+    private Long hostId;
     private String hostName;
 }

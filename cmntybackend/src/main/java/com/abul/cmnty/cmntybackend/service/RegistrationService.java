@@ -10,6 +10,7 @@ import com.abul.cmnty.cmntybackend.exception.ResourceNotFoundException;
 import com.abul.cmnty.cmntybackend.exception.UnauthorizedException;
 import com.abul.cmnty.cmntybackend.model.enums.EventStatus;
 import com.abul.cmnty.cmntybackend.model.enums.RegistrationStatus;
+import com.abul.cmnty.cmntybackend.model.enums.Role;
 import com.abul.cmnty.cmntybackend.repository.EventRepository;
 import com.abul.cmnty.cmntybackend.repository.RegistrationRepository;
 import com.abul.cmnty.cmntybackend.repository.UserRepository;
@@ -90,8 +91,11 @@ public class RegistrationService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event not found with id " + eventId));
 
-        if (!event.getHost().getId().equals(requestingUserId)) {
-            throw new UnauthorizedException("Only the host can view registrations for this event");
+        // Admin or host can view registrations
+        User requestingUser = userRepository.findById(requestingUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + requestingUserId));
+        if (requestingUser.getRole() != Role.ADMIN && !event.getHost().getId().equals(requestingUserId)) {
+            throw new UnauthorizedException("Only the host or an admin can view registrations for this event");
         }
 
         return registrationRepository.findByEvent(event)
